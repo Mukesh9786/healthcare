@@ -73,3 +73,48 @@ resource "google_pubsub_topic" "orchestrator" {
 resource "google_pubsub_topic" "human_in_the_loop" {
   name = "human-in-the-loop-topic"
 }
+
+resource "google_pubsub_subscription" "ingestor_sub" {
+  name  = "ingestor-topic-sub"
+  topic = google_pubsub_topic.ingestor.name
+}
+
+resource "google_pubsub_subscription" "parser_sub" {
+  name  = "parser-topic-sub"
+  topic = google_pubsub_topic.parser.name
+}
+
+resource "google_pubsub_subscription" "compliance_sub" {
+  name  = "compliance-topic-sub"
+  topic = google_pubsub_topic.compliance.name
+}
+
+resource "google_pubsub_subscription" "test_generator_sub" {
+  name  = "test-generator-topic-sub"
+  topic = google_pubsub_topic.test_generator.name
+}
+
+resource "google_pubsub_subscription" "data_synthesizer_sub" {
+  name  = "data-synthesizer-topic-sub"
+  topic = google_pubsub_topic.data_synthesizer.name
+}
+
+resource "google_pubsub_subscription" "traceability_agent_sub" {
+  name  = "traceability-agent-topic-sub"
+  topic = google_pubsub_topic.traceability_agent.name
+}
+
+resource "google_pubsub_subscription" "alm_integrator_sub" {
+  name  = "alm-integrator-topic-sub"
+  topic = google_pubsub_topic.alm_integrator.name
+}
+
+resource "google_pubsub_subscription" "orchestrator_sub" {
+  name  = "orchestrator-topic-sub"
+  topic = google_pubsub_topic.orchestrator.name
+}
+
+resource "google_pubsub_subscription" "human_in_the_loop_sub" {
+  name  = "human-in-the-loop-topic-sub"
+  topic = google_pubsub_topic.human_in_the_loop.name
+}
