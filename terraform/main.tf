@@ -9,17 +9,21 @@ terraform {
 }
 
 provider "google" {
-  project = "your-gcp-project-id" # Please replace with your GCP project ID
+  project = "mukesh-444504" # Please replace with your GCP project ID
   region  = "us-central1"
 }
 
-resource "google_firestore_database" "database" {
-  project        = "your-gcp-project-id" # Please replace with your GCP project ID
-  name           = "(default)"
-  location_id    = "us-central"
-  type           = "FIRESTORE_NATIVE"
-  delete_protection_state = "DELETE_PROTECTION_DISABLED"
-  deletion_policy = "DELETE"
+resource "google_project_service" "appengine" {
+  project = "mukesh-444504" # Please replace with your GCP project ID
+  service = "appengine.googleapis.com"
+}
+
+resource "google_app_engine_application" "app" {
+  project     = "mukesh-444504" # Please replace with your GCP project ID
+  location_id = "us-central"
+  database_type = "CLOUD_FIRESTORE"
+
+  depends_on = [google_project_service.appengine]
 }
 
 resource "google_bigquery_dataset" "regulations" {
