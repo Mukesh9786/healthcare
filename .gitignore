@@ -1,0 +1,17 @@
+# Python virtual environments
+**/venv/
+
+# Terraform state and configuration files
+.terraform/
+*.tfstate
+*.tfstate.*
+
+# Python cache
+**/__pycache__/
+
+# IDE / OS specific
+.DS_Store
+.vscode/
+
+# Log files
+*.log
