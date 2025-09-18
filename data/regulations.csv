@@ -1,0 +1,5 @@
+regulation_id,regulation_name,description
+IEC-62304,Software Lifecycle,Specifies lifecycle requirements for the development of medical software and software within medical devices.
+ISO-13485,Quality Management,Specifies requirements for a quality management system where an organization needs to demonstrate its ability to provide medical devices and related services that consistently meet customer and applicable regulatory requirements.
+FDA-21-CFR-820,Quality System Regulation,Requires that domestic or foreign manufacturers have a quality system for the design, manufacture, packaging, labeling, storage, installation, and servicing of finished medical devices intended for commercial distribution in the United States.
+ISO-27001,Information Security,Specifies the requirements for establishing, implementing, maintaining and continually improving an information security management system (ISMS).

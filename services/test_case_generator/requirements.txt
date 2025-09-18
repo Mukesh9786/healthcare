@@ -1,1 +1,2 @@
 google-cloud-pubsub==2.13.0
+google-cloud-aiplatform==1.38.1

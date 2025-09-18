@@ -5,7 +5,7 @@ from google.cloud import pubsub_v1
 app = Flask(__name__)
 
 # Configure Pub/Sub
-project_id = os.environ.get("GCP_PROJECT_ID", "your-gcp-project-id")
+project_id = os.environ.get("GCP_PROJECT_ID", "mukesh-444504")
 publisher = pubsub_v1.PublisherClient()
 ingestor_topic_path = publisher.topic_path(project_id, "ingestor-topic")
 

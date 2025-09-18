@@ -2,7 +2,7 @@ import os
 from google.cloud import pubsub_v1
 
 # Configure Pub/Sub
-project_id = os.environ.get("GCP_PROJECT_ID", "your-gcp-project-id")
+project_id = os.environ.get("GCP_PROJECT_ID", "mukesh-444504")
 
 # Subscriber
 subscriber = pubsub_v1.SubscriberClient()
