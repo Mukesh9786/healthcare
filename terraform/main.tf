@@ -1,4 +1,3 @@
-
 terraform {
   required_providers {
     google = {
@@ -78,6 +77,10 @@ resource "google_pubsub_topic" "human_in_the_loop" {
   name = "human-in-the-loop-topic"
 }
 
+resource "google_pubsub_topic" "results" {
+  name = "results-topic"
+}
+
 resource "google_pubsub_subscription" "ingestor_sub" {
   name  = "ingestor-topic-sub"
   topic = google_pubsub_topic.ingestor.name
@@ -121,4 +124,9 @@ resource "google_pubsub_subscription" "orchestrator_sub" {
 resource "google_pubsub_subscription" "human_in_the_loop_sub" {
   name  = "human-in-the-loop-topic-sub"
   topic = google_pubsub_topic.human_in_the_loop.name
+}
+
+resource "google_pubsub_subscription" "results_sub" {
+  name  = "results-topic-sub"
+  topic = google_pubsub_topic.results.name
 }

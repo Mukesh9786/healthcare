@@ -15,6 +15,7 @@ subscription_path = subscriber.subscription_path(project_id, "test-generator-top
 
 publisher = pubsub_v1.PublisherClient()
 data_synthesizer_topic_path = publisher.topic_path(project_id, "data-synthesizer-topic")
+results_topic_path = publisher.topic_path(project_id, "results-topic")
 
 vertexai.init(project=project_id, location=location)
 model = GenerativeModel(model_name)
@@ -27,39 +28,42 @@ with open(prompt_file_path, "r") as f:
 def generate_test_cases(data):
     """Calls the Gemini model to generate test cases."""
     full_prompt = f"{prompt}\n\n**Input Data:**\n```json\n{json.dumps(data, indent=2)}\n```\n\n**Output:**"
-    
     response = model.generate_content(full_prompt)
-    
-    # Clean up the response to get just the JSON
     parsed_json = response.text.strip().replace("```json", "").replace("```", "").strip()
-    return parsed_json
+    return json.loads(parsed_json)
 
 def callback(message):
-    """Processes incoming Pub/Sub messages."""
+    """Processes incoming messages, generates test cases, and forwards."""
+    job_id = None
     try:
         data_str = message.data.decode('utf-8')
-        print(f"Test Case Generator received data: {data_str}")
-        augmented_data = json.loads(data_str)
+        payload = json.loads(data_str)
+        job_id = payload.get("job_id")
+        
+        print(f"Test Case Generator received data for job: {job_id}")
 
-        # Generate test cases using Vertex AI
-        test_cases_str = generate_test_cases(augmented_data)
-        test_cases = json.loads(test_cases_str)
-        print(f"Successfully generated test cases: {test_cases_str}")
+        test_cases = generate_test_cases(payload)
+        print(f"Successfully generated test cases for job {job_id}")
 
-        # Augment the data with the new test cases
-        final_data = {
-            **augmented_data,
-            "generated_test_cases": test_cases
+        # 1. Publish result for this agent
+        result_payload = {
+            "job_id": job_id,
+            "agent": "Test Case Generator",
+            "status": "Complete",
+            "data": test_cases
         }
+        publisher.publish(results_topic_path, json.dumps(result_payload).encode("utf-8"))
 
-        final_data_str = json.dumps(final_data, indent=2)
-
-        # Publish the final data to the data synthesizer topic
-        future = publisher.publish(data_synthesizer_topic_path, final_data_str.encode("utf-8"))
-        print(f"Test Case Generator published message {future.result()} to {data_synthesizer_topic_path}")
+        # 2. Forward the augmented payload to the next agent
+        next_payload = {**payload, "generated_test_cases": test_cases}
+        publisher.publish(data_synthesizer_topic_path, json.dumps(next_payload).encode("utf-8"))
+        print(f"Test Case Generator forwarded message for job {job_id} to {data_synthesizer_topic_path}")
 
     except Exception as e:
-        print(f"Error generating test cases: {e}")
+        print(f"Error generating test cases for job {job_id}: {e}")
+        if job_id:
+            error_payload = {"job_id": job_id, "agent": "Test Case Generator", "status": "Error", "data": str(e)}
+            publisher.publish(results_topic_path, json.dumps(error_payload).encode("utf-8"))
 
     message.ack()
 
